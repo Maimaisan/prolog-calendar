@@ -2,8 +2,7 @@
 main :-
 date_time(Com),
 arg(1, Com, Year),
-arg(2, Com, Month1),
-Month is Month1 -1,
+arg(2, Com, Month),
 leap_day(Year, Month, Day),
 zelle(Year, Month, Pad),
 day_pad(Pad,[],Padlist),
