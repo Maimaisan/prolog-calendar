@@ -1,0 +1,49 @@
+:- initialization(main).
+main :-
+date_time(Com),
+arg(1, Com, Year),
+arg(2, Com, Month1),
+Month is Month1 -1,
+leap_day(Year, Month, Day),
+zelle(Year, Month, Pad),
+day_pad(Pad,[],Padlist),
+day_listup(0,Day,Padlist,List),
+output_list(List,0).
+
+leap_day(_, Mon, Day) :- member(Mon,[1,3,5,7,8,10,12]),Day is 31,!.
+leap_day(_, Mon, Day) :- member(Mon,[4,6,9,11]),Day is 30,!.
+leap_day(Year, Mon, Day) :- member(Mon,[2]),leap_year(Year),Day is 29,!.
+leap_day(_, Mon, Day) :- member(Mon,[2]), Day is 28.
+  
+leap_year(X):- 0 is X mod 400,!.
+leap_year(X):- 0 is X mod 100,!,fail.
+leap_year(X):- 0 is X mod 4,!.
+
+day_listup(X,X,L,L).
+day_listup(X1,X,L1,L) :-
+X2 is X1 + 1,
+append(L1,[X2],L2),
+day_listup(X2,X,L2,L).
+
+day_pad(0,L,L).
+day_pad(X,L1,L) :-
+X1 is X - 1,
+append([0],L1,L2),
+day_pad(X1,L2,L).
+
+zelle(Year, Mon, Pad) :-
+C is Year // 100,
+C1 is C // 4,
+Y1 is Year // 4,
+M is ((Mon + 12) mod 15) + (((Mon + 12) // 15) * 3),
+M1 is (((M * 26) + 26) // 10),
+Pad is (M1 + Year + Y1 - C * 2  + C1 - 1) mod 7.
+
+output_list([],_).
+output_list([D|L],X) :- D =:= 0, write('  '),output_sep(X),  X1 is ((X + 1) mod 7), output_list(L,X1).
+output_list([D|L],X) :- D =< 9, format(' ~d',[D]),output_sep(X),  X1 is ((X + 1) mod 7), output_list(L,X1).
+output_list([D|L],X) :- D > 9, format('~d',[D]),output_sep(X), X1 is ((X + 1) mod 7), output_list(L,X1).
+
+output_sep(X) :- X =:= 6 , ! , nl.
+output_sep(_) :- write(' ').
+
